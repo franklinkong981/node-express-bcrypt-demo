@@ -1,0 +1,20 @@
+{
+  "name": "express-bcrypt-demo",
+  "version": "1.0.0",
+  "description": "A demo app used to illustrate how you can use bcrypt for authentication with Node/Express.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.1",
+    "jest": "^29.7.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.13.1",
+    "supertest": "^7.0.0"
+  }
+}
