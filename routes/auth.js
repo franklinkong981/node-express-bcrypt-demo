@@ -5,7 +5,9 @@ const router = new express.Router();
 const ExpressError = require("../expressError");
 const db = require("../db");
 const bcrypt = require("bcrypt");
-const { BCRYPT_WORK_FACTOR } = require("../config");
+const jwt = require("jsonwebtoken");
+const { BCRYPT_WORK_FACTOR, SECRET_KEY } = require("../config");
+const {ensureLoggedIn, ensureAdmin} = require("../middleware/auth");
 
 router.get('/', (req, res, next) => {
   res.send("APP IS WORKING!!!");
@@ -49,7 +51,8 @@ router.post('/login', async (req, res, next) => {
     const user = results.rows[0];
     if (user) {
       if (await bcrypt.compare(password, user.password)) {
-        return res.json({message: 'Logged in!'});
+        const token = jwt.sign({username, type: "admin"}, SECRET_KEY);
+        return res.json({message: "Logged in!", token});
       } else {
         return res.json({message: 'Password does NOT match! Try again.'});
       }
@@ -59,6 +62,22 @@ router.post('/login', async (req, res, next) => {
   } catch (e) {
     return next(e);
   }
+});
+
+router.get('/topsecret', ensureLoggedIn, (req, res, next) => {
+  try {
+    return res.json({msg: "SIGNED IN! This is top secret"});
+  } catch(e) {
+    return next(new ExpressError("Please login first!", 401));
+  }
+});
+
+router.get('/private', ensureLoggedIn, (req, res, next) => {
+  return res.json({msg: `Welcome to my VIP section, ${req.user.username}`});
+});
+
+router.get('/adminhome', ensureAdmin, (req, res, next) => {
+  return res.json({msg: `ADMIN DASHBOARD! WELCOME ${req.user.username}`});
 });
 
 module.exports = router;
