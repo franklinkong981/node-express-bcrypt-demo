@@ -54,7 +54,7 @@ router.post('/login', async (req, res, next) => {
         const token = jwt.sign({username, type: "admin"}, SECRET_KEY);
         return res.json({message: "Logged in!", token});
       } else {
-        return res.json({message: 'Password does NOT match! Try again.'});
+        throw new ExpressError("Wrong password!", 400);
       }
     }
     //the user with the inputted username wasn't found.
